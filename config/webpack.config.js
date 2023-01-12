@@ -1,5 +1,6 @@
 'use strict';
-
+const HTMLInlineCSSWebpackPlugin = require('html-inline-css-webpack-plugin').default;
+const HtmlInlineScriptPlugin = require('html-inline-script-webpack-plugin');
 const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
@@ -419,7 +420,7 @@ module.exports = function (webpackEnv) {
                     },
                   ],
                 ],
-                
+
                 plugins: [
                   isEnvDevelopment &&
                     shouldUseReactRefresh &&
@@ -453,7 +454,7 @@ module.exports = function (webpackEnv) {
                 cacheDirectory: true,
                 // See #6846 for context on why cacheCompression is disabled
                 cacheCompression: false,
-                
+
                 // Babel sourcemaps are needed for debugging into node_modules
                 // code.  Without the options below, debuggers like VSCode
                 // show incorrect code and set breakpoints on the wrong lines.
@@ -568,7 +569,7 @@ module.exports = function (webpackEnv) {
         Object.assign(
           {},
           {
-            inject: true,
+            inject: 'body',
             template: paths.appHtml,
           },
           isEnvProduction
@@ -595,6 +596,14 @@ module.exports = function (webpackEnv) {
       isEnvProduction &&
         shouldInlineRuntimeChunk &&
         new InlineChunkHtmlPlugin(HtmlWebpackPlugin, [/runtime-.+[.]js/]),
+
+      isEnvProduction &&
+      shouldInlineRuntimeChunk &&
+      new HTMLInlineCSSWebpackPlugin(),
+      isEnvProduction &&
+      shouldInlineRuntimeChunk &&
+      new HtmlInlineScriptPlugin(),
+
       // Makes some environment variables available in index.html.
       // The public URL is available as %PUBLIC_URL% in index.html, e.g.:
       // <link rel="icon" href="%PUBLIC_URL%/favicon.ico">
